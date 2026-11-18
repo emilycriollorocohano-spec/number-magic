@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+@layer base {
+  html,
+  body {
+    font-family: "Fredoka", "Nunito", system-ui, sans-serif;
+    background-color: #fffbf2;
+    color: #1e293b;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+
+  button {
+    touch-action: manipulation;
+  }
+}
+
+/* Tactile wooden/toy 3D button press */
+.toy-press {
+  transition:
+    transform 130ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 130ms ease,
+    filter 130ms ease;
+}
+
+.toy-press:active:not(:disabled) {
+  transform: translateY(4px) scale(0.97);
+}
+
+@keyframes popSpring {
+  0% {
+    transform: scale(0.55) rotate(-6deg);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.09) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes gentleFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes gentleWiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-7deg);
+  }
+  50% {
+    transform: rotate(7deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+}
+
+@keyframes hopBounce {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-14px) scale(1.1);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes soundBar {
+  0%,
+  100% {
+    transform: scaleY(0.45);
+  }
+  50% {
+    transform: scaleY(1.15);
+  }
+}
+
+.anim-pop-spring {
+  animation: popSpring 0.36s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.anim-float {
+  animation: gentleFloat 2.8s ease-in-out infinite;
+}
+
+.anim-wiggle {
+  animation: gentleWiggle 0.42s ease-in-out;
+}
+
+.anim-hop {
+  animation: hopBounce 0.36s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.anim-sound-bar {
+  animation: soundBar 0.55s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-pop-spring,
+  .anim-float,
+  .anim-wiggle,
+  .anim-hop,
+  .anim-sound-bar {
+    animation: none !important;
+  }
+}

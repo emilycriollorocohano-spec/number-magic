@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>¡Aprende los Números del 1 al 10!</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fuente amigable y redondeada para niños -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Librería de confeti para celebraciones -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * {
+      font-family: 'Fredoka', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    html, body {
+      background: linear-gradient(135deg, #E0F7FA 0%, #FFF9C4 50%, #FCE4EC 100%);
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      overscroll-behavior-y: contain;
+    }
+
+    /* Botones estilo juguete 3D suave con amplia área táctil */
+    .btn-toy {
+      min-height: 54px;
+      transition: transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.14s ease;
+      box-shadow: 0 7px 0 rgba(0, 0, 0, 0.18), 0 10px 18px rgba(0, 0, 0, 0.1);
+    }
+    .btn-toy:active {
+      transform: translateY(5px) scale(0.96);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18), 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Animaciones divertidas */
+    @keyframes popIn {
+      0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+      70% { transform: scale(1.18) rotate(5deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes bounceSoft {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.06); }
+    }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      20% { transform: rotate(-10deg); }
+      40% { transform: rotate(10deg); }
+      60% { transform: rotate(-8deg); }
+      80% { transform: rotate(8deg); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.7), 0 8px 0 rgba(0,0,0,0.18); }
+      50% { box-shadow: 0 0 0 14px rgba(250, 204, 21, 0), 0 8px 0 rgba(0,0,0,0.18); }
+    }
+
+    .anim-pop {
+      animation: popIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .anim-bounce-soft {
+      animation: bounceSoft 1.8s infinite ease-in-out;
+    }
+
+    .anim-wiggle {
+      animation: wiggle 0.5s ease-in-out;
+    }
+
+    .anim-glow {
+      animation: pulseGlow 1.5s infinite;
+    }
+
+    /* Patrón de lunares muy sutil en tarjetas */
+    .card-dots {
+      background-color: #ffffff;
+      background-image: radial-gradient(#e2e8f0 2px, transparent 2px);
+      background-size: 24px 24px;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-between p-3 sm:p-5 text-slate-800">
+
+  <!-- BARRA SUPERIOR DE NAVEGACIÓN -->
+  <header class="w-full max-w-5xl bg-white/95 backdrop-blur-md rounded-3xl p-2.5 sm:p-3.5 shadow-xl border-4 border-sky-200 mb-3 sm:mb-4">
+    <div class="flex flex-col lg:flex-row items-center justify-between gap-3">
+      <!-- Título / Logo y controles de voz -->
+      <div class="flex flex-wrap items-center justify-center sm:justify-between w-full lg:w-auto gap-2 px-1">
+        <div class="flex items-center gap-2.5">
+          <span class="text-4xl sm:text-5xl anim-bounce-soft">🎈</span>
+          <div>
+            <h1 class="text-xl sm:text-3xl font-bold text-sky-600 leading-tight">¡Números Mágicos!</h1>
+            <p class="text-xs sm:text-sm font-semibold text-amber-500">Aprende del 1 al 10 jugando</p>
+          </div>
+        </div>
+
+        <!-- Controles de Audio y Selector de Voz Natural -->
+        <div class="flex items-center gap-2">
+          <button id="btn-sound-toggle" onclick="toggleSound()" aria-label="Activar o silenciar sonido"
+            class="bg-amber-100 hover:bg-amber-200 text-amber-800 px-3.5 py-2.5 rounded-2xl text-xl sm:text-2xl btn-toy border-2 border-amber-300 flex items-center justify-center">
+            🔊
+          </button>
+
+          <button onclick="testVoice()" title="Probar voz en español"
+            class="bg-sky-100 hover:bg-sky-200 text-sky-800 px-3 py-2.5 rounded-2xl text-sm sm:text-base font-bold btn-toy border-2 border-sky-300 flex items-center gap-1.5">
+            <span>🗣️</span>
+            <span class="hidden sm:inline">Probar voz</span>
+          </button>
+
+          <select id="voice-select" onchange="onVoiceChange()" aria-label="Seleccionar voz en español"
+            class="hidden max-w-[140px] sm:max-w-[180px] bg-white text-slate-700 text-xs sm:text-sm font-bold px-2.5 py-2.5 rounded-2xl border-2 border-sky-300 shadow-sm focus:outline-none">
+          </select>
+        </div>
+      </div>
+
+      <!-- Pestañas de los 3 Juegos -->
+      <nav class="grid grid-cols-3 gap-2 sm:gap-3 w-full lg:w-auto">
+        <button id="tab-explorar" onclick="switchMode('explorar')"
+          class="btn-toy flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-5 sm:py-3 rounded-2xl font-bold text-base sm:text-xl bg-amber-400 text-white border-b-4 border-amber-600 ring-4 ring-white scale-105">
+          <span class="text-2xl sm:text-3xl">🔍</span>
+          <span>Explorar</span>
+        </button>
+
+        <button id="tab-contar" onclick="switchMode('contar')"
+          class="btn-toy flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-5 sm:py-3 rounded-2xl font-bold text-base sm:text-xl bg-emerald-400 text-white border-b-4 border-emerald-600 opacity-75">
+          <span class="text-2xl sm:text-3xl">🍎</span>
+          <span>Contar</span>
+        </button>
+
+        <button id="tab-ordenar" onclick="switchMode('ordenar')"
+          class="btn-toy flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-3 py-2.5 sm:px-5 sm:py-3 rounded-2xl font-bold text-base sm:text-xl bg-purple-500 text-white border-b-4 border-purple-700 opacity-75">
+          <span class="text-2xl sm:text-3xl">🚂</span>
+          <span>Ordenar</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="w-full max-w-5xl flex-1 flex flex-col items-center justify-center">
+
+    <!-- ==========================================
+         SECCIÓN 1: EXPLORAR
+    =========================================== -->
+    <section id="section-explorar" class="w-full flex flex-col gap-4 sm:gap-5">
+      <!-- Área central destacada donde aparecen los dibujos -->
+      <div class="card-dots rounded-3xl p-4 sm:p-7 shadow-xl border-4 border-amber-300 min-h-[220px] sm:min-h-[270px] flex flex-col items-center justify-between relative">
+        <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-2">
+          <span id="explore-badge" class="bg-amber-100 text-amber-800 px-4 py-1.5 rounded-full text-lg sm:text-2xl font-bold border-2 border-amber-300">
+            👆 ¡Toca un número!
+          </span>
+
+          <!-- Filtro rápido: Primeros pasos (1 al 6) o Todos (1 al 10) -->
+          <div class="flex items-center gap-1.5 bg-amber-50 p-1 rounded-2xl border-2 border-amber-200">
+            <button id="btn-explore-range-6" onclick="setExploreRange(6)"
+              class="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-400 text-white shadow-sm transition">
+              ⭐ 1 al 6
+            </button>
+            <button id="btn-explore-range-10" onclick="setExploreRange(10)"
+              class="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold text-amber-800 hover:bg-amber-100 transition">
+              🌈 1 al 10
+            </button>
+          </div>
+
+          <button id="btn-repeat-explore" onclick="repeatExploreNumber()"
+            class="hidden btn-toy bg-sky-400 hover:bg-sky-500 text-white px-4 py-2 rounded-2xl font-bold text-lg sm:text-xl flex items-center gap-2">
+            <span>🔊</span> <span id="explore-word-label">Uno</span>
+          </button>
+        </div>
+
+        <!-- Cuadrícula de objetos divertidos -->
+        <div id="explore-objects-area" class="flex-1 w-full flex flex-wrap items-center justify-center gap-3 sm:gap-5 py-3">
+          <div class="text-center text-slate-500 px-2">
+            <div class="text-6xl sm:text-7xl mb-2 anim-bounce-soft">🌟</div>
+            <p class="text-lg sm:text-2xl font-bold text-sky-700">¡Toca un número abajo para escuchar su sonido y ver sus dibujos!</p>
+          </div>
+        </div>
+
+        <p id="explore-hint" class="text-xs sm:text-base font-bold text-sky-700 bg-sky-100 px-4 py-1.5 rounded-full hidden text-center">
+          💡 ¡Toca cada dibujo para contarlos uno por uno en voz alta!
+        </p>
+      </div>
+
+      <!-- Cuadrícula de botones grandes de números -->
+      <div id="explore-buttons-grid" class="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4">
+        <!-- Se generan dinámicamente con JS -->
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 2: CONTAR
+    =========================================== -->
+    <section id="section-contar" class="w-full hidden flex-col gap-4 sm:gap-5">
+      <div class="card-dots rounded-3xl p-4 sm:p-8 shadow-xl border-4 border-emerald-300 flex flex-col items-center">
+        <!-- Encabezado con botón de audio para repetir pregunta -->
+        <div class="flex flex-wrap items-center justify-center gap-3 mb-3 sm:mb-4">
+          <button onclick="speakQuestionCount()"
+            class="btn-toy bg-sky-400 hover:bg-sky-500 text-white px-5 py-3 rounded-2xl font-bold text-xl sm:text-2xl flex items-center gap-2">
+            <span>🔊</span>
+            <span>¿Cuántos hay?</span>
+          </button>
+          <div class="bg-emerald-100 text-emerald-800 px-4 py-2.5 rounded-2xl font-bold text-lg sm:text-xl border-2 border-emerald-300">
+            ⭐ Aciertos: <span id="count-score">0</span>
+          </div>
+        </div>
+
+        <!-- Marco bonito con los objetos a contar -->
+        <div id="count-objects-box"
+          class="w-full min-h-[190px] sm:min-h-[240px] bg-gradient-to-b from-emerald-50 to-teal-50 rounded-3xl border-4 border-dashed border-emerald-300 p-4 sm:p-6 flex flex-wrap items-center justify-center gap-3 sm:gap-6 my-2">
+          <!-- Objetos generados dinámicamente -->
+        </div>
+
+        <!-- Mensaje de retroalimentación amable y visible -->
+        <div id="count-feedback" class="min-h-[58px] w-full flex items-center justify-center my-2 px-2">
+          <span class="text-lg sm:text-2xl font-bold text-slate-600 text-center">¡Cuéntalos con tu dedito y toca el número!</span>
+        </div>
+
+        <!-- 3 Opciones de botones extra grandes -->
+        <div id="count-options" class="grid grid-cols-3 gap-3 sm:gap-6 w-full max-w-2xl mt-1">
+          <!-- 3 botones generados dinámicamente -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 3: ORDENAR
+    =========================================== -->
+    <section id="section-ordenar" class="w-full hidden flex-col gap-4 sm:gap-5">
+      <div class="card-dots rounded-3xl p-4 sm:p-7 shadow-xl border-4 border-purple-300 flex flex-col items-center">
+        <!-- Controles superiores: Nivel (1-5, 1-6 o 1-10) y Ayuda -->
+        <div class="w-full flex flex-wrap items-center justify-between gap-2 sm:gap-3 mb-3">
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <button id="btn-order-6" onclick="setOrderMax(6)"
+              class="btn-toy bg-purple-500 text-white px-3.5 py-2 rounded-2xl font-bold text-sm sm:text-lg">
+              🌟 1 al 6
+            </button>
+            <button id="btn-order-10" onclick="setOrderMax(10)"
+              class="btn-toy bg-purple-200 text-purple-800 px-3.5 py-2 rounded-2xl font-bold text-sm sm:text-lg">
+              🚀 1 al 10
+            </button>
+          </div>
+
+          <button onclick="speakOrderPrompt()"
+            class="btn-toy bg-amber-400 text-white px-4 py-2 rounded-2xl font-bold text-base sm:text-lg flex items-center gap-2">
+            <span>🔊</span>
+            <span id="order-next-label">Busca el 1</span>
+          </button>
+
+          <button onclick="initOrderGame()"
+            class="btn-toy bg-sky-400 text-white px-3.5 py-2 rounded-2xl font-bold text-sm sm:text-lg">
+            🔄 Mezclar
+          </button>
+        </div>
+
+        <!-- Mensaje amable de retroalimentación en Ordenar -->
+        <div id="order-feedback" class="min-h-[44px] w-full flex items-center justify-center mb-2">
+          <span class="text-base sm:text-xl font-bold text-purple-700 text-center">👆 Toca los números en orden del 1 al 6</span>
+        </div>
+
+        <!-- Barra de progreso / Tren de números ordenados arriba -->
+        <div class="w-full bg-purple-50 rounded-2xl p-3 border-2 border-purple-200 mb-4">
+          <p class="text-center text-xs sm:text-base font-bold text-purple-700 mb-2">🚂 Tren de los números en orden:</p>
+          <div id="order-slots" class="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <!-- Ranuras del 1 al N -->
+          </div>
+        </div>
+
+        <!-- Burbujas / Tarjetas desordenadas para tocar -->
+        <div id="order-bubbles" class="w-full min-h-[190px] flex flex-wrap items-center justify-center gap-3 sm:gap-5 py-2">
+          <!-- Botones desordenados -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Pie de página discreto -->
+  <footer class="mt-4 text-center text-xs sm:text-sm font-semibold text-slate-500">
+    Diseñado con ❤️ para pequeños exploradores de 3 a 5 años
+  </footer>
+
+  <script>
+    // ==========================================
+    // DATOS Y CONFIGURACIÓN (1 AL 10 CON NOTAS MUSICALES)
+    // ==========================================
+    const NUMBERS_DATA = [
+      { num: 1,  word: '¡Uno!',    spoken: 'Uno',    noteFreq: 261.63, emoji: '🍎', namePlural: 'manzana',   color: 'bg-rose-400 border-rose-600' },       // Do4
+      { num: 2,  word: '¡Dos!',    spoken: 'Dos',    noteFreq: 293.66, emoji: '🐶', namePlural: 'perritos',  color: 'bg-orange-400 border-orange-600' },   // Re4
+      { num: 3,  word: '¡Tres!',   spoken: 'Tres',   noteFreq: 329.63, emoji: '🍌', namePlural: 'plátanos',  color: 'bg-amber-400 border-amber-600' },     // Mi4
+      { num: 4,  word: '¡Cuatro!', spoken: 'Cuatro', noteFreq: 349.23, emoji: '🐸', namePlural: 'ranitas',   color: 'bg-emerald-400 border-emerald-600' }, // Fa4
+      { num: 5,  word: '¡Cinco!',  spoken: 'Cinco',  noteFreq: 392.00, emoji: '🍓', namePlural: 'fresas',    color: 'bg-pink-400 border-pink-600' },       // Sol4
+      { num: 6,  word: '¡Seis!',   spoken: 'Seis',   noteFreq: 440.00, emoji: '🦁', namePlural: 'leones',    color: 'bg-yellow-500 border-yellow-700' },   // La4
+      { num: 7,  word: '¡Siete!',  spoken: 'Siete',  noteFreq: 493.88, emoji: '🍉', namePlural: 'sandías',   color: 'bg-teal-400 border-teal-600' },       // Si4
+      { num: 8,  word: '¡Ocho!',   spoken: 'Ocho',   noteFreq: 523.25, emoji: '🐼', namePlural: 'pandas',    color: 'bg-sky-400 border-sky-600' },         // Do5
+      { num: 9,  word: '¡Nueve!',  spoken: 'Nueve',  noteFreq: 587.33, emoji: '🍊', namePlural: 'naranjas',  color: 'bg-indigo-400 border-indigo-600' },   // Re5
+      { num: 10, word: '¡Diez!',   spoken: 'Diez',   noteFreq: 659.25, emoji: '🦋', namePlural: 'mariposas', color: 'bg-purple-400 border-purple-600' }    // Mi5
+    ];
+
+    const PRAISE_PHRASES = [
+      '¡Muy bien!',
+      '¡Excelente!',
+      '¡Lo lograste!',
+      '¡Fantástico!',
+      '¡Eres genial!'
+    ];
+
+    let soundEnabled = true;
+    let currentMode = 'explorar';
+
+    // Estado Sección Explorar (Empieza destacando 1 al 6, con cambio inmediato a 1 al 10)
+    let exploreMaxRange = 6;
+    let selectedExploreNum = null;
+    let exploreTapCounter = 0;
+
+    // Estado Sección Contar
+    let countTargetNum = 3;
+    let countTargetEmoji = '🍎';
+    let countScore = 0;
+    let countLocked = false;
+
+    // Estado Sección Ordenar
+    let orderMax = 6;
+    let orderCurrentExpected = 1;
+
+    // ==========================================
+    // SISTEMA DE SONIDO ENRIQUECIDO (WEB AUDIO API)
+    // ==========================================
+    let audioCtx = null;
+
+    function unlockAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+    }
+
+    // Desbloquear audio en el primer toque en móviles/tablets
+    ['touchstart', 'pointerdown', 'click'].forEach(evt => {
+      window.addEventListener(evt, unlockAudio, { once: true, passive: true });
+    });
+
+    // Tono musical de xilófono dulce para cada número (1 al 6 y hasta el 10)
+    function playNumberNote(freq) {
+      if (!soundEnabled) return;
+      try {
+        unlockAudio();
+        if (!audioCtx) return;
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const overtone = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+
+        overtone.type = 'triangle';
+        overtone.frequency.setValueAtTime(freq * 2, now);
+
+        const overtoneGain = audioCtx.createGain();
+        overtoneGain.gain.setValueAtTime(0.08, now);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.32, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+        osc.connect(gain);
+        overtone.connect(overtoneGain);
+        overtoneGain.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        overtone.start(now);
+        osc.stop(now + 0.46);
+        overtone.stop(now + 0.46);
+      } catch (e) {
+        console.warn('Error en nota musical:', e);
+      }
+    }
+
+    // Efecto de sonido positivo: Campanitas de estrellas + Aplausos cálidos
+    function playCelebrationSound() {
+      if (!soundEnabled) return;
+      try {
+        unlockAudio();
+        if (!audioCtx) return;
+
+        const now = audioCtx.currentTime;
+
+        // 1. Campanitas mágicas de estrellas (arpegio brillante)
+        const starNotes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        starNotes.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.075);
+
+          gain.gain.setValueAtTime(0.001, now + idx * 0.075);
+          gain.gain.linearRampToValueAtTime(0.24, now + idx * 0.075 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.075 + 0.35);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + idx * 0.075);
+          osc.stop(now + idx * 0.075 + 0.36);
+        });
+
+        // 2. Palmadas / Aplausos sintetizados suaves (10 palmadas rítmicas)
+        const bufferSize = audioCtx.sampleRate * 0.08;
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.018));
+        }
+
+        for (let c = 0; c < 10; c++) {
+          const clapTime = now + 0.12 + c * 0.095 + (Math.random() * 0.02);
+          const noise = audioCtx.createBufferSource();
+          noise.buffer = noiseBuffer;
+
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 1100 + Math.random() * 400;
+          filter.Q.value = 1.2;
+
+          const clapGain = audioCtx.createGain();
+          clapGain.gain.setValueAtTime(0.22, clapTime);
+          clapGain.gain.exponentialRampToValueAtTime(0.01, clapTime + 0.075);
+
+          noise.connect(filter);
+          filter.connect(clapGain);
+          clapGain.connect(audioCtx.destination);
+
+          noise.start(clapTime);
+          noise.stop(clapTime + 0.08);
+        }
+      } catch (e) {
+        console.warn('Error en sonido de celebración:', e);
+      }
+    }
+
+    // Sonido amable y suave cuando se equivoca ("boing" dulce, nunca brusco)
+    function playGentleTryAgainSound() {
+      if (!soundEnabled) return;
+      try {
+        unlockAudio();
+        if (!audioCtx) return;
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(240, now + 0.14);
+        osc.frequency.exponentialRampToValueAtTime(290, now + 0.28);
+
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.30);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.31);
+      } catch (e) {
+        console.warn('Error en sonido suave:', e);
+      }
+    }
+
+    // ==========================================
+    // SELECTOR INTELIGENTE DE VOZ NATURAL EN ESPAÑOL
+    // ==========================================
+    let spanishVoices = [];
+    let selectedVoice = null;
+
+    // Lista ordenada de voces en español más cálidas y naturales en Windows, macOS, iOS y Android
+    const PREFERRED_VOICE_KEYWORDS = [
+      'google español',
+      'natural',
+      'neural',
+      'online',
+      'paulina',
+      'sabina',
+      'helena',
+      'mónica',
+      'monica',
+      'camila',
+      'lucía',
+      'lucia',
+      'laura',
+      'sofia',
+      'sofía',
+      'valeria',
+      'elena',
+      'dalia',
+      'paloma',
+      'marisol'
+    ];
+
+    function loadBestSpanishVoices() {
+      if (!('speechSynthesis' in window)) return;
+      const allVoices = window.speechSynthesis.getVoices();
+      if (!allVoices.length) return;
+
+      const filtered = allVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith('es'));
+      if (!filtered.length) return;
+
+      // Ordenar poniendo primero las voces más naturales y amigables
+      spanishVoices = filtered.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        const scoreA = PREFERRED_VOICE_KEYWORDS.findIndex(k => nameA.includes(k));
+        const scoreB = PREFERRED_VOICE_KEYWORDS.findIndex(k => nameB.includes(k));
+
+        const rankA = scoreA === -1 ? 999 : scoreA;
+        const rankB = scoreB === -1 ? 999 : scoreB;
+        return rankA - rankB;
+      });
+
+      // Mantener elección manual del usuario si ya había elegido una
+      const selectEl = document.getElementById('voice-select');
+      const currentSelectedName = selectedVoice ? selectedVoice.name : null;
+
+      selectedVoice = spanishVoices.find(v => v.name === currentSelectedName) || spanishVoices[0];
+
+      // Mostrar selector si el dispositivo tiene más de 1 voz en español
+      if (spanishVoices.length > 1 && selectEl) {
+        selectEl.innerHTML = '';
+        spanishVoices.forEach((v, idx) => {
+          const opt = document.createElement('option');
+          opt.value = idx;
+          // Limpiar nombres largos del sistema para que sea fácil de leer
+          const cleanName = v.name.replace(/Microsoft |Google |Apple /gi, '').split('(')[0].trim();
+          opt.textContent = `🎙️ ${cleanName}`;
+          if (v.name === selectedVoice.name) opt.selected = true;
+          selectEl.appendChild(opt);
+        });
+        selectEl.classList.remove('hidden');
+      }
+    }
+
+    if ('speechSynthesis' in window) {
+      loadBestSpanishVoices();
+      window.speechSynthesis.onvoiceschanged = loadBestSpanishVoices;
+    }
+
+    function onVoiceChange() {
+      const selectEl = document.getElementById('voice-select');
+      const idx = parseInt(selectEl.value, 10);
+      if (spanishVoices[idx]) {
+        selectedVoice = spanishVoices[idx];
+        testVoice();
+      }
+    }
+
+    function testVoice() {
+      playNumberNote(523.25);
+      speak('¡Hola! Vamos a contar juntos: Uno, dos, tres, cuatro, cinco, seis.');
+    }
+
+    function speak(text) {
+      if (!soundEnabled || !('speechSynthesis' in window)) return;
+      try {
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        if (!selectedVoice) loadBestSpanishVoices();
+
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+          utterance.lang = selectedVoice.lang;
+        } else {
+          utterance.lang = 'es-MX';
+        }
+
+        // Parámetros ajustados para voz infantil cálida, clara y pausada
+        utterance.rate = 0.88;
+        utterance.pitch = 1.14;
+        utterance.volume = 1.0;
+
+        window.speechSynthesis.speak(utterance);
+      } catch (e) {
+        console.warn('Síntesis de voz no disponible:', e);
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('btn-sound-toggle');
+      btn.textContent = soundEnabled ? '🔊' : '🔇';
+      if (soundEnabled) {
+        playNumberNote(523.25);
+        speak('Sonido activado');
+      } else if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function fireConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 75,
+          spread: 80,
+          origin: { y: 0.62 },
+          colors: ['#FF595E', '#FFCA3A', '#8AC926', '#1982C4', '#6A4C93']
+        });
+      }
+    }
+
+    // ==========================================
+    // NAVEGACIÓN ENTRE MODOS
+    // ==========================================
+    function switchMode(mode) {
+      currentMode = mode;
+      playNumberNote(392.00);
+
+      const modes = ['explorar', 'contar', 'ordenar'];
+      modes.forEach(m => {
+        const sec = document.getElementById(`section-${m}`);
+        const tab = document.getElementById(`tab-${m}`);
+        if (m === mode) {
+          sec.classList.remove('hidden');
+          sec.classList.add('flex');
+          tab.classList.remove('opacity-75');
+          tab.classList.add('ring-4', 'ring-white', 'scale-105');
+        } else {
+          sec.classList.add('hidden');
+          sec.classList.remove('flex');
+          tab.classList.add('opacity-75');
+          tab.classList.remove('ring-4', 'ring-white', 'scale-105');
+        }
+      });
+
+      if (mode === 'explorar') {
+        speak('¡Toca un número para escucharlo!');
+      } else if (mode === 'contar') {
+        initCountRound();
+      } else if (mode === 'ordenar') {
+        initOrderGame();
+      }
+    }
+
+    // ==========================================
+    // SECCIÓN 1: EXPLORAR (SONIDO DEL 1 AL 6 Y DEL 1 AL 10)
+    // ==========================================
+    function setExploreRange(maxRange) {
+      exploreMaxRange = maxRange;
+      const btn6 = document.getElementById('btn-explore-range-6');
+      const btn10 = document.getElementById('btn-explore-range-10');
+
+      if (maxRange === 6) {
+        btn6.className = 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-400 text-white shadow-sm transition';
+        btn10.className = 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold text-amber-800 hover:bg-amber-100 transition';
+      } else {
+        btn10.className = 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-400 text-white shadow-sm transition';
+        btn6.className = 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold text-amber-800 hover:bg-amber-100 transition';
+      }
+
+      playNumberNote(440);
+      buildExploreButtons();
+      speak(`Números del uno al ${maxRange === 6 ? 'seis' : 'diez'}`);
+    }
+
+    function buildExploreButtons() {
+      const grid = document.getElementById('explore-buttons-grid');
+      grid.innerHTML = '';
+
+      // Ajustar columnas para que del 1 al 6 se vean súper grandes y cómodos
+      if (exploreMaxRange === 6) {
+        grid.className = 'grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4';
+      } else {
+        grid.className = 'grid grid-cols-5 gap-2.5 sm:gap-4';
+      }
+
+      const visibleNumbers = NUMBERS_DATA.slice(0, exploreMaxRange);
+
+      visibleNumbers.forEach(item => {
+        const btn = document.createElement('button');
+        btn.id = `explore-btn-${item.num}`;
+        btn.className = `btn-toy ${item.color} text-white rounded-3xl py-4 sm:py-6 flex flex-col items-center justify-center border-b-8 focus:outline-none`;
+        btn.innerHTML = `
+          <span class="text-4xl sm:text-6xl font-bold leading-none drop-shadow">${item.num}</span>
+          <span class="text-sm sm:text-lg font-bold mt-1 opacity-95">${item.spoken}</span>
+        `;
+        btn.onclick = () => selectExploreNumber(item.num);
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectExploreNumber(num) {
+      selectedExploreNum = num;
+      exploreTapCounter = 0;
+      const data = NUMBERS_DATA.find(d => d.num === num);
+
+      // Tocar nota musical ascendente + pronunciación clara del número
+      playNumberNote(data.noteFreq);
+      speak(`${data.word}`);
+
+      // Resaltar botón activo
+      NUMBERS_DATA.slice(0, exploreMaxRange).forEach(d => {
+        const b = document.getElementById(`explore-btn-${d.num}`);
+        if (!b) return;
+        if (d.num === num) {
+          b.classList.add('anim-glow', 'scale-105');
+        } else {
+          b.classList.remove('anim-glow', 'scale-105');
+        }
+      });
+
+      // Actualizar encabezado de tarjeta
+      document.getElementById('explore-badge').innerHTML = `Número <span class="text-2xl sm:text-3xl text-rose-500">${data.num}</span>`;
+      document.getElementById('explore-word-label').textContent = data.spoken;
+      document.getElementById('btn-repeat-explore').classList.remove('hidden');
+      document.getElementById('explore-hint').classList.remove('hidden');
+
+      // Renderizar dibujos con animación escalonada
+      const area = document.getElementById('explore-objects-area');
+      area.innerHTML = '';
+
+      for (let i = 1; i <= num; i++) {
+        const objBtn = document.createElement('button');
+        objBtn.className = 'anim-pop relative bg-white hover:bg-amber-50 border-4 border-amber-200 rounded-3xl p-3 sm:p-4 shadow-md transition-transform active:scale-90 flex flex-col items-center justify-center min-w-[76px] sm:min-w-[96px]';
+        objBtn.style.animationDelay = `${(i - 1) * 65}ms`;
+        objBtn.style.opacity = '0';
+        objBtn.innerHTML = `
+          <span class="text-5xl sm:text-7xl select-none">${data.emoji}</span>
+          <span class="count-tag hidden mt-1 bg-sky-500 text-white text-sm sm:text-base font-bold px-2.5 py-0.5 rounded-full"></span>
+        `;
+
+        // Permitir tocar cada dibujo para ir contándolo uno por uno
+        objBtn.onclick = () => {
+          const tag = objBtn.querySelector('.count-tag');
+          if (tag.classList.contains('hidden')) {
+            exploreTapCounter++;
+            tag.textContent = exploreTapCounter;
+            tag.classList.remove('hidden');
+            objBtn.classList.add('border-sky-400', 'bg-sky-50');
+
+            const wordObj = NUMBERS_DATA.find(x => x.num === exploreTapCounter);
+            if (wordObj) {
+              playNumberNote(wordObj.noteFreq);
+              speak(wordObj.word);
+            }
+
+            if (exploreTapCounter === num) {
+              setTimeout(() => {
+                playCelebrationSound();
+                fireConfetti();
+              }, 380);
+            }
+          } else {
+            const existingNum = parseInt(tag.textContent, 10);
+            const wordObj = NUMBERS_DATA.find(x => x.num === existingNum);
+            if (wordObj) {
+              playNumberNote(wordObj.noteFreq);
+              speak(wordObj.spoken);
+            }
+            objBtn.classList.add('anim-wiggle');
+            setTimeout(() => objBtn.classList.remove('anim-wiggle'), 500);
+          }
+        };
+
+        area.appendChild(objBtn);
+      }
+    }
+
+    function repeatExploreNumber() {
+      if (!selectedExploreNum) return;
+      const data = NUMBERS_DATA.find(d => d.num === selectedExploreNum);
+      playNumberNote(data.noteFreq);
+      speak(`${data.word} ... ${data.spoken} ${data.namePlural}`);
+    }
+
+    // ==========================================
+    // SECCIÓN 2: CONTAR
+    // ==========================================
+    function initCountRound() {
+      countLocked = false;
+      const randomData = NUMBERS_DATA[Math.floor(Math.random() * NUMBERS_DATA.length)];
+      countTargetNum = randomData.num;
+      countTargetEmoji = randomData.emoji;
+
+      // Mostrar objetos en el marco
+      const box = document.getElementById('count-objects-box');
+      box.innerHTML = '';
+
+      for (let i = 0; i < countTargetNum; i++) {
+        const span = document.createElement('span');
+        span.className = 'anim-pop text-5xl sm:text-7xl cursor-pointer transition-transform hover:scale-110 active:scale-90 p-1';
+        span.style.animationDelay = `${i * 55}ms`;
+        span.style.opacity = '0';
+        span.textContent = countTargetEmoji;
+        span.onclick = () => {
+          const noteData = NUMBERS_DATA[i] || NUMBERS_DATA[0];
+          playNumberNote(noteData.noteFreq);
+          span.classList.add('scale-125');
+          setTimeout(() => span.classList.remove('scale-125'), 200);
+        };
+        box.appendChild(span);
+      }
+
+      // Generar 3 opciones (1 correcta + 2 distractores distintos)
+      const optionsSet = new Set([countTargetNum]);
+      while (optionsSet.size < 3) {
+        const candidate = Math.floor(Math.random() * 10) + 1;
+        optionsSet.add(candidate);
+      }
+      const optionsArray = Array.from(optionsSet).sort(() => Math.random() - 0.5);
+
+      const optionsContainer = document.getElementById('count-options');
+      optionsContainer.innerHTML = '';
+
+      const optionColors = [
+        'bg-sky-400 border-sky-600',
+        'bg-amber-400 border-amber-600',
+        'bg-pink-400 border-pink-600'
+      ];
+
+      optionsArray.forEach((optNum, idx) => {
+        const optData = NUMBERS_DATA.find(d => d.num === optNum);
+        const btn = document.createElement('button');
+        btn.className = `btn-toy ${optionColors[idx]} text-white rounded-3xl py-5 sm:py-7 flex flex-col items-center justify-center border-b-8`;
+        btn.innerHTML = `
+          <span class="text-5xl sm:text-7xl font-bold leading-none">${optNum}</span>
+          <span class="text-base sm:text-xl font-bold mt-1">${optData.spoken}</span>
+        `;
+        btn.onclick = () => handleCountAnswer(optNum, btn);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById('count-feedback').innerHTML =
+        '<span class="text-lg sm:text-2xl font-bold text-slate-600 text-center">👆 ¿Cuántos dibujos ves?</span>';
+
+      speakQuestionCount();
+    }
+
+    function speakQuestionCount() {
+      speak('¿Cuántos hay?');
+    }
+
+    function handleCountAnswer(chosenNum, btnElement) {
+      if (countLocked) return;
+
+      if (chosenNum === countTargetNum) {
+        countLocked = true;
+        countScore++;
+        document.getElementById('count-score').textContent = countScore;
+
+        btnElement.classList.remove('bg-sky-400', 'bg-amber-400', 'bg-pink-400', 'border-sky-600', 'border-amber-600', 'border-pink-600');
+        btnElement.classList.add('bg-emerald-500', 'border-emerald-700', 'scale-110');
+
+        const praise = PRAISE_PHRASES[Math.floor(Math.random() * PRAISE_PHRASES.length)];
+        const spokenWord = NUMBERS_DATA.find(d => d.num === countTargetNum).spoken;
+
+        document.getElementById('count-feedback').innerHTML =
+          `<div class="anim-pop bg-emerald-100 border-2 border-emerald-400 text-emerald-800 px-5 py-2 rounded-2xl text-xl sm:text-3xl font-bold shadow-sm">
+            👏🎉 ${praise} ¡Hay ${countTargetNum}!
+          </div>`;
+
+        playCelebrationSound();
+        fireConfetti();
+        speak(`${praise} ¡Hay ${spokenWord}!`);
+
+        setTimeout(() => {
+          if (currentMode === 'contar') initCountRound();
+        }, 2500);
+      } else {
+        playGentleTryAgainSound();
+        btnElement.classList.add('anim-wiggle', 'opacity-65');
+        setTimeout(() => btnElement.classList.remove('anim-wiggle'), 500);
+
+        document.getElementById('count-feedback').innerHTML =
+          `<div class="anim-pop bg-amber-100 border-2 border-amber-400 text-amber-800 px-5 py-2 rounded-2xl text-xl sm:text-2xl font-bold shadow-sm">
+            🤗 ¡Inténtalo de nuevo! Cuenta despacito
+          </div>`;
+        speak('¡Inténtalo de nuevo! Tú puedes');
+      }
+    }
+
+    // ==========================================
+    // SECCIÓN 3: ORDENAR (ASCENDENTE)
+    // ==========================================
+    function setOrderMax(maxVal) {
+      orderMax = maxVal;
+      const btn6 = document.getElementById('btn-order-6');
+      const btn10 = document.getElementById('btn-order-10');
+
+      if (maxVal === 6) {
+        btn6.className = 'btn-toy bg-purple-500 text-white px-3.5 py-2 rounded-2xl font-bold text-sm sm:text-lg';
+        btn10.className = 'btn-toy bg-purple-200 text-purple-800 px-3.5 py-2 rounded-2xl font-bold text-sm sm:text-lg';
+      } else {
+        btn10.className = 'btn-toy bg-purple-500 text-white px-3.5 py-2 rounded-2xl font-bold text-sm sm:text-lg';
+        btn6.className = 'btn-toy bg-purple-200 text-purple-800 px-3.5 py-2 rounded-2xl font-bold text-sm sm:text-lg';
+      }
+      playNumberNote(440);
+      initOrderGame();
+    }
+
+    function initOrderGame() {
+      orderCurrentExpected = 1;
+      updateOrderNextLabel();
+
+      document.getElementById('order-feedback').innerHTML =
+        `<span class="text-base sm:text-xl font-bold text-purple-700 text-center">👆 Toca los números en orden del 1 al ${orderMax}</span>`;
+
+      // 1. Construir ranuras superiores del tren (1 al orderMax)
+      const slotsContainer = document.getElementById('order-slots');
+      slotsContainer.innerHTML = '';
+
+      for (let i = 1; i <= orderMax; i++) {
+        const slot = document.createElement('div');
+        slot.id = `order-slot-${i}`;
+        slot.className = 'w-12 h-12 sm:w-16 sm:h-16 rounded-2xl border-4 border-dashed border-purple-300 bg-white flex items-center justify-center text-2xl sm:text-3xl font-bold text-purple-300 transition-all';
+        slot.textContent = i;
+        slotsContainer.appendChild(slot);
+      }
+
+      // 2. Generar números desordenados
+      const nums = Array.from({ length: orderMax }, (_, i) => i + 1);
+      for (let i = nums.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [nums[i], nums[j]] = [nums[j], nums[i]];
+      }
+      if (nums.every((val, idx) => val === idx + 1)) {
+        nums.reverse();
+      }
+
+      const bubblesContainer = document.getElementById('order-bubbles');
+      bubblesContainer.innerHTML = '';
+
+      nums.forEach((n, idx) => {
+        const data = NUMBERS_DATA.find(d => d.num === n);
+        const btn = document.createElement('button');
+        btn.id = `order-bubble-${n}`;
+        btn.className = `btn-toy anim-pop ${data.color} text-white w-24 h-24 sm:w-32 sm:h-32 rounded-full flex flex-col items-center justify-center border-b-8 shadow-lg`;
+        btn.style.animationDelay = `${idx * 55}ms`;
+        btn.innerHTML = `
+          <span class="text-4xl sm:text-6xl font-bold leading-none">${n}</span>
+          <span class="text-xs sm:text-base font-bold mt-0.5">${data.spoken}</span>
+        `;
+        btn.onclick = () => handleOrderTap(n, btn);
+        bubblesContainer.appendChild(btn);
+      });
+
+      speak('Toca los números en orden, empezando por el uno');
+    }
+
+    function updateOrderNextLabel() {
+      const label = document.getElementById('order-next-label');
+      if (orderCurrentExpected <= orderMax) {
+        label.textContent = `Busca el ${orderCurrentExpected}`;
+      } else {
+        label.textContent = '¡Completado!';
+      }
+    }
+
+    function speakOrderPrompt() {
+      if (orderCurrentExpected <= orderMax) {
+        const word = NUMBERS_DATA.find(d => d.num === orderCurrentExpected).spoken;
+        speak(`Busca el número ${word}`);
+      }
+    }
+
+    function handleOrderTap(num, btnElement) {
+      const data = NUMBERS_DATA.find(d => d.num === num);
+
+      if (num === orderCurrentExpected) {
+        playNumberNote(data.noteFreq);
+        speak(data.word);
+
+        document.getElementById('order-feedback').innerHTML =
+          `<span class="text-lg sm:text-2xl font-bold text-emerald-600 anim-pop">✨ ¡Muy bien! ${data.word}</span>`;
+
+        // Iluminar ranura en el tren de progreso
+        const slot = document.getElementById(`order-slot-${num}`);
+        slot.className = `anim-pop w-12 h-12 sm:w-16 sm:h-16 rounded-2xl ${data.color} text-white flex items-center justify-center text-2xl sm:text-3xl font-bold shadow-md`;
+
+        // Ocultar burbuja seleccionada suavemente
+        btnElement.style.visibility = 'hidden';
+        btnElement.style.pointerEvents = 'none';
+
+        orderCurrentExpected++;
+        updateOrderNextLabel();
+
+        // ¿Completó toda la secuencia?
+        if (orderCurrentExpected > orderMax) {
+          setTimeout(() => {
+            playCelebrationSound();
+            fireConfetti();
+            const praise = PRAISE_PHRASES[Math.floor(Math.random() * PRAISE_PHRASES.length)];
+            speak(`${praise} ¡Ordenaste todos los números!`);
+
+            document.getElementById('order-feedback').innerHTML =
+              `<span class="text-xl sm:text-2xl font-bold text-purple-700">👏🎉 ¡Tren completo!</span>`;
+
+            const bubblesContainer = document.getElementById('order-bubbles');
+            bubblesContainer.innerHTML = `
+              <div class="anim-pop text-center py-4">
+                <div class="text-6xl sm:text-7xl mb-3">🏆👏🎉</div>
+                <h3 class="text-2xl sm:text-4xl font-bold text-purple-600 mb-4">${praise}</h3>
+                <button onclick="initOrderGame()" class="btn-toy bg-emerald-400 text-white px-8 py-4 rounded-3xl font-bold text-xl sm:text-2xl border-b-8 border-emerald-600">
+                  🔄 ¡Jugar otra vez!
+                </button>
+              </div>
+            `;
+          }, 420);
+        }
+      } else {
+        // Movimiento suave y mensaje grande y amable de "¡Inténtalo de nuevo!"
+        playGentleTryAgainSound();
+        btnElement.classList.add('anim-wiggle');
+        setTimeout(() => btnElement.classList.remove('anim-wiggle'), 500);
+
+        const expectedWord = NUMBERS_DATA.find(d => d.num === orderCurrentExpected).spoken;
+        document.getElementById('order-feedback').innerHTML =
+          `<div class="anim-pop bg-amber-100 border-2 border-amber-400 text-amber-800 px-4 py-1.5 rounded-2xl text-base sm:text-xl font-bold">
+            🤗 ¡Inténtalo de nuevo! Busca el número ${orderCurrentExpected}
+          </div>`;
+        speak(`¡Inténtalo de nuevo! Ese es el ${data.spoken}. Busca el ${expectedWord}`);
+      }
+    }
+
+    // Inicialización al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+      buildExploreButtons();
+      loadBestSpanishVoices();
+    });
+  </script>
+</body>
+</html>
