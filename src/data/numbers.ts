@@ -17,6 +17,7 @@ export interface NumberItem {
   theme: NumberThemeId;
   itemSingular: string;
   itemPlural: string;
+  gender: "f" | "m";
   noteFreq: number;
   cardBg: string;
   cardBorder: string;
@@ -33,6 +34,7 @@ export const NUMBERS_DATA: NumberItem[] = [
     theme: "apple",
     itemSingular: "manzana",
     itemPlural: "manzanas",
+    gender: "f",
     noteFreq: 261.63,
     cardBg: "bg-[#FF5964]",
     cardBorder: "border-[#D93843]",
@@ -47,6 +49,7 @@ export const NUMBERS_DATA: NumberItem[] = [
     theme: "puppy",
     itemSingular: "perrito",
     itemPlural: "perritos",
+    gender: "m",
     noteFreq: 293.66,
     cardBg: "bg-[#FF8A3D]",
     cardBorder: "border-[#D9681F]",
@@ -61,6 +64,7 @@ export const NUMBERS_DATA: NumberItem[] = [
     theme: "banana",
     itemSingular: "plátano",
     itemPlural: "plátanos",
+    gender: "m",
     noteFreq: 329.63,
     cardBg: "bg-[#F4B400]",
     cardBorder: "border-[#C78D00]",
@@ -75,6 +79,7 @@ export const NUMBERS_DATA: NumberItem[] = [
     theme: "frog",
     itemSingular: "ranita",
     itemPlural: "ranitas",
+    gender: "f",
     noteFreq: 349.23,
     cardBg: "bg-[#22B573]",
     cardBorder: "border-[#168A56]",
@@ -89,6 +94,7 @@ export const NUMBERS_DATA: NumberItem[] = [
     theme: "strawberry",
     itemSingular: "fresa",
     itemPlural: "fresas",
+    gender: "f",
     noteFreq: 392.0,
     cardBg: "bg-[#EC4899]",
     cardBorder: "border-[#BE185D]",
@@ -103,6 +109,7 @@ export const NUMBERS_DATA: NumberItem[] = [
     theme: "star",
     itemSingular: "estrella",
     itemPlural: "estrellas",
+    gender: "f",
     noteFreq: 440.0,
     cardBg: "bg-[#0EA5E9]",
     cardBorder: "border-[#0284C7]",
@@ -117,6 +124,7 @@ export const NUMBERS_DATA: NumberItem[] = [
     theme: "watermelon",
     itemSingular: "sandía",
     itemPlural: "sandías",
+    gender: "f",
     noteFreq: 493.88,
     cardBg: "bg-[#14B8A6]",
     cardBorder: "border-[#0F766E]",
@@ -131,6 +139,7 @@ export const NUMBERS_DATA: NumberItem[] = [
     theme: "panda",
     itemSingular: "panda",
     itemPlural: "pandas",
+    gender: "m",
     noteFreq: 523.25,
     cardBg: "bg-[#6366F1]",
     cardBorder: "border-[#4338CA]",
@@ -145,6 +154,7 @@ export const NUMBERS_DATA: NumberItem[] = [
     theme: "orange",
     itemSingular: "naranja",
     itemPlural: "naranjas",
+    gender: "f",
     noteFreq: 587.33,
     cardBg: "bg-[#F97316]",
     cardBorder: "border-[#C2410C]",
@@ -159,6 +169,7 @@ export const NUMBERS_DATA: NumberItem[] = [
     theme: "butterfly",
     itemSingular: "mariposa",
     itemPlural: "mariposas",
+    gender: "f",
     noteFreq: 659.25,
     cardBg: "bg-[#9333EA]",
     cardBorder: "border-[#6B21A8]",
@@ -167,6 +178,29 @@ export const NUMBERS_DATA: NumberItem[] = [
     accentHex: "#9333EA",
   },
 ];
+
+export function formatQuantitySpoken(item: NumberItem): string {
+  if (item.num === 1) {
+    return item.gender === "f"
+      ? `una ${item.itemSingular}`
+      : `un ${item.itemSingular}`;
+  }
+  return `${item.spoken.toLowerCase()} ${item.itemPlural}`;
+}
+
+export function formatQuantityLabel(item: NumberItem): string {
+  if (item.num === 1) {
+    return item.gender === "f"
+      ? `Una ${item.itemSingular}`
+      : `Un ${item.itemSingular}`;
+  }
+  return `${item.num} ${item.itemPlural}`;
+}
+
+export function formatCountQuestion(item: NumberItem): string {
+  const qWord = item.gender === "f" ? "¿Cuántas" : "¿Cuántos";
+  return `${qWord} ${item.itemPlural} hay?`;
+}
 
 export const PRAISE_PHRASES = [
   "¡Muy bien!",

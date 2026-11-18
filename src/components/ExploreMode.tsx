@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Sparkles, RotateCcw } from "lucide-react";
-import { NUMBERS_DATA, type NumberItem } from "../data/numbers";
+import {
+  NUMBERS_DATA,
+  formatQuantitySpoken,
+  formatQuantityLabel,
+  type NumberItem,
+} from "../data/numbers";
 import {
   NumberIllustration,
   FingerCountingHands,
@@ -46,8 +51,8 @@ export function ExploreMode({ onPromptChange }: ExploreModeProps) {
     setHopIndex(null);
     playMarimbaNote(item.noteFreq);
 
-    const itemWord = item.num === 1 ? item.itemSingular : item.itemPlural;
-    const spokenPhrase = `${item.word} ${item.spoken} ${itemWord}`;
+    const qtySpoken = formatQuantitySpoken(item);
+    const spokenPhrase = `${item.word} ${qtySpoken}`;
     onPromptChange(
       `Número ${item.num}: ¡Toca cada ${item.itemSingular} para contar!`,
       () => speakKidVoice(spokenPhrase)
@@ -72,13 +77,10 @@ export function ExploreMode({ onPromptChange }: ExploreModeProps) {
       }
 
       if (countNum === selectedItem.num) {
-        const itemWord =
-          selectedItem.num === 1
-            ? selectedItem.itemSingular
-            : selectedItem.itemPlural;
-        onPromptChange(
-          `¡Bravo! Contaste ${selectedItem.num} ${itemWord}`,
-          () => speakKidVoice(`¡Muy bien! ${selectedItem.spoken} ${itemWord}`)
+        const qtySpoken = formatQuantitySpoken(selectedItem);
+        const qtyLabel = formatQuantityLabel(selectedItem);
+        onPromptChange(`¡Bravo! Contaste ${qtyLabel.toLowerCase()}`, () =>
+          speakKidVoice(`¡Muy bien! ${qtySpoken}`)
         );
         setTimeout(() => {
           playCelebrationSound();
@@ -97,7 +99,7 @@ export function ExploreMode({ onPromptChange }: ExploreModeProps) {
   const handleResetCount = () => {
     setTappedIndices([]);
     playMarimbaNote(selectedItem.noteFreq);
-    speakKidVoice(`Contemos ${selectedItem.spoken} ${selectedItem.num === 1 ? selectedItem.itemSingular : selectedItem.itemPlural}`);
+    speakKidVoice(`Contemos ${formatQuantitySpoken(selectedItem)}`);
   };
 
   return (
@@ -117,10 +119,7 @@ export function ExploreMode({ onPromptChange }: ExploreModeProps) {
                 {selectedItem.spoken}
               </h2>
               <p className="text-base sm:text-lg font-semibold text-slate-600">
-                {selectedItem.num}{" "}
-                {selectedItem.num === 1
-                  ? selectedItem.itemSingular
-                  : selectedItem.itemPlural}
+                {formatQuantityLabel(selectedItem)}
               </p>
             </div>
           </div>

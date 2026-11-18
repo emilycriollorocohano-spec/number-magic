@@ -3,6 +3,8 @@ import { Star, ArrowRight } from "lucide-react";
 import {
   NUMBERS_DATA,
   PRAISE_PHRASES,
+  formatCountQuestion,
+  formatQuantitySpoken,
   type NumberItem,
 } from "../data/numbers";
 import { NumberIllustration } from "./NumberIllustrations";
@@ -60,11 +62,9 @@ export function CountMode({ onPromptChange }: CountModeProps) {
 
   const announceQuestion = useCallback(
     (target: NumberItem) => {
-      const pluralName =
-        target.num === 1 ? target.itemSingular : target.itemPlural;
-      const msg = `¿Cuántos dibujos hay?`;
-      onPromptChange(msg, () => speakKidVoice(`¿Cuántos ${pluralName} hay?`));
-      speakKidVoice("¿Cuántos hay?");
+      const questionText = formatCountQuestion(target);
+      onPromptChange(questionText, () => speakKidVoice(questionText));
+      speakKidVoice(questionText);
     },
     [onPromptChange]
   );
@@ -120,19 +120,16 @@ export function CountMode({ onPromptChange }: CountModeProps) {
       setScore((s) => s + 1);
       const praise =
         PRAISE_PHRASES[Math.floor(Math.random() * PRAISE_PHRASES.length)];
-      const itemLabel =
-        round.target.num === 1
-          ? round.target.itemSingular
-          : round.target.itemPlural;
+      const qtySpoken = formatQuantitySpoken(round.target);
 
-      setFeedback(`${praise} ¡Hay ${round.target.num} ${itemLabel}!`);
-      onPromptChange(`${praise} ¡Hay ${round.target.num}!`, () =>
-        speakKidVoice(`${praise} ¡Hay ${round.target.spoken}!`)
+      setFeedback(`${praise} ¡Hay ${qtySpoken}!`);
+      onPromptChange(`${praise} ¡Hay ${qtySpoken}!`, () =>
+        speakKidVoice(`${praise} ¡Hay ${qtySpoken}!`)
       );
 
       playCelebrationSound();
       fireCelebrationConfetti();
-      speakKidVoice(`${praise} ¡Hay ${round.target.spoken}!`);
+      speakKidVoice(`${praise} ¡Hay ${qtySpoken}!`);
     } else {
       if (!wrongChoices.includes(option.num)) {
         setWrongChoices((prev) => [...prev, option.num]);
@@ -149,7 +146,7 @@ export function CountMode({ onPromptChange }: CountModeProps) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
-            ¿Cuántos hay?
+            {formatCountQuestion(round.target)}
           </h2>
 
           <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200">

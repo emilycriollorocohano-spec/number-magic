@@ -3,6 +3,7 @@ import { RotateCcw, Trophy, HelpCircle } from "lucide-react";
 import {
   NUMBERS_DATA,
   PRAISE_PHRASES,
+  formatQuantitySpoken,
   type NumberItem,
 } from "../data/numbers";
 import { NumberIllustration } from "./NumberIllustrations";
@@ -94,11 +95,7 @@ export function MatchMode({ onPromptChange }: MatchModeProps) {
     const labelText =
       card.kind === "digit"
         ? card.item.word
-        : `${card.item.spoken} ${
-            card.item.num === 1
-              ? card.item.itemSingular
-              : card.item.itemPlural
-          }`;
+        : formatQuantitySpoken(card.item);
     speakKidVoice(labelText);
 
     const nextFlipped = [...flippedIds, card.id];

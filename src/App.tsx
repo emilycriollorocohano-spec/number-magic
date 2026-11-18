@@ -117,9 +117,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-gradient-to-b from-[#E0F2FE] via-[#FFFBF2] to-[#FEF3C7] text-slate-800">
-      {/* Top Bar */}
-      <header className="w-full bg-white/95 border-b-2 border-sky-200 px-3 sm:px-6 py-3 sticky top-0 z-30">
+    <div className="min-h-[100dvh] flex flex-col overflow-x-clip bg-gradient-to-b from-[#E0F2FE] via-[#FFFBF2] to-[#FEF3C7] text-slate-800">
+      {/* Top Bar (non-sticky on mobile/tablet so content scrolls freely) */}
+      <header className="w-full bg-white/95 border-b-2 border-sky-200 px-3 sm:px-6 py-2.5 sm:py-3 lg:sticky lg:top-0 z-30">
         <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
           {/* Zone 1: Brand Title */}
           <div className="flex items-center gap-2.5 shrink-0">

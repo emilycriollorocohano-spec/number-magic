@@ -144,8 +144,8 @@ export function OrderMode({ onPromptChange }: OrderModeProps) {
       </div>
 
       {/* Illustrated Number Train */}
-      <div className="bg-[#FAF5FF] border-2 border-purple-200 rounded-3xl p-4 sm:p-5 overflow-x-auto">
-        <div className="flex items-end justify-start sm:justify-center gap-2 min-w-max mx-auto pb-1">
+      <div className="bg-[#FAF5FF] border-2 border-purple-200 rounded-3xl p-3 sm:p-5">
+        <div className="flex flex-wrap items-end justify-center gap-x-1.5 gap-y-3 mx-auto pb-1">
           {/* SVG Cute Locomotive */}
           <div className="shrink-0 flex flex-col items-center">
             <svg

@@ -347,7 +347,7 @@ export function TraceMode({ onPromptChange }: TraceModeProps) {
         {/* Tracing Stage */}
         <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-5 items-center justify-items-center">
           {/* Whiteboard Canvas */}
-          <div className="relative w-full max-w-[300px] aspect-square bg-[#FFFDF7] border-4 border-dashed border-sky-300 rounded-3xl shadow-inner overflow-hidden">
+          <div className="relative w-full max-w-[240px] sm:max-w-[290px] aspect-square bg-[#FFFDF7] border-4 border-dashed border-sky-300 rounded-3xl shadow-inner overflow-hidden">
             {/* Guide SVG underneath */}
             <svg
               viewBox="0 0 240 240"
@@ -422,10 +422,11 @@ export function TraceMode({ onPromptChange }: TraceModeProps) {
               />
               <div className="text-left">
                 <div className="text-2xl font-bold text-slate-800">
-                  {selectedItem.num}{" "}
                   {selectedItem.num === 1
-                    ? selectedItem.itemSingular
-                    : selectedItem.itemPlural}
+                    ? selectedItem.gender === "f"
+                      ? `Una ${selectedItem.itemSingular}`
+                      : `Un ${selectedItem.itemSingular}`
+                    : `${selectedItem.num} ${selectedItem.itemPlural}`}
                 </div>
                 {completedTrace ? (
                   <div className="inline-flex items-center gap-1 text-emerald-700 font-bold text-sm">

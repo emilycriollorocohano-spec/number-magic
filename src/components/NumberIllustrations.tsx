@@ -504,7 +504,9 @@ export function FingerCountingHands({ count }: FingerHandsProps) {
   return (
     <div
       className="flex items-center justify-center gap-1 bg-amber-50 border-2 border-amber-200 rounded-2xl px-3 py-1.5"
-      aria-label={`${count} dedos levantados`}
+      aria-label={
+        count === 1 ? "1 dedo levantado" : `${count} dedos levantados`
+      }
     >
       {renderHand(leftFingers, false)}
       {count > 5 && renderHand(rightFingers, true)}
